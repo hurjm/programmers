@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/x-icon"
+        href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
+    <link rel="mask-icon" type=""
+        href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg"
+        color="#111">
+    <title><%= title%></title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+
+    <script>
+        window.console = window.console || function (t) { };
+    </script>
+    <script>
+        if (document.location.search.match(/type=embed/gi)) {
+            window.parent.postMessage("resize", "*");
+        }
+    </script>
+</head>
+
+<body translate="no">
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button class="btn btn-light">Today</button>
+            <div class="ico-arrow">
+                <span style="cursor:pointer" id="previous-month" data-toggle="tooltip" data-placement="top" title="" data-original-title="이전">
+                    <i class="material-icons">
+                        chevron_left
+                    </i>
+                </span>
+                <span style="cursor:pointer" id="next-month" data-toggle="tooltip" data-placement="top" title="" data-original-title="다음">
+                    <i class="material-icons">
+                        chevron_right
+                    </i>
+                </span>
+            </div>
+            <h4 id="year-month"></h4>
+            <ul class="nav nav-tabs view-tab" id="view" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab-month" data-toggle="tab" href="#month" role="tab"
+                        aria-controls="month" aria-selected="true">월</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-day" data-toggle="tab" href="#day" role="tab" aria-controls="day"
+                        aria-selected="false">일</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="tab-content">
+            <div class="tab-pane active show" id="month" role="tabpanel" aria-labelledby="tab-month">
+                <div class="monthly-calendar">
+                    <div class="week-day">
+                        <div class="day-name">일</div>
+                        <div class="day-name">월</div>
+                        <div class="day-name">화</div>
+                        <div class="day-name">수</div>
+                        <div class="day-name">목</div>
+                        <div class="day-name">금</div>
+                        <div class="day-name">토</div>
+                    </div>
+                    <div class="calendar"></div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="day" role="tabpanel" aria-labelledby="tab-day">
+                <div class="daily-calendar"><span class="day-name" id="date-day"></span>
+                    <div class="event-consecutive event-start event-end" data-toggle="popover" data-html="true"
+                        data-placement="left" data-content="<div class=&quot;content-line&quot;><div class=&quot;event-consecutive-marking&quot;></div><div class=&quot;title&quot;><h5>일정 1</h5><h7 class=&quot;reservation&quot;>2019년 9월 15일 – 17일</div>
+            </div><div class=&quot;content-line&quot;><i class=&quot;material-icons&quot;>
+    notes
+    </i><div class=&quot;title&quot;><h7 class=&quot;reservation&quot;>스케쥴 메모, 설명이 나타납니다.</div>" data-original-title=""
+                        title="">연속 일정 1
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerSchedule" tabindex="-1" role="dialog" aria-labelledby="registerScheduleLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerScheduleLabel">일정 만들기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="col-form-label">일정 제목</label>
+                            <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">일정 설명</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">일정 시작 날짜</label>
+                                    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1">
+                                        <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="material-icons">
+                                                    calendar_today
+                                                </i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">일정 시작 시간</label>
+                                    <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input"
+                                            data-target="#datetimepicker2">
+                                        <div class="input-group-append" data-target="#datetimepicker2"
+                                            data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="material-icons">
+                                                    access_time
+                                                </i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">일정 종료 날짜</label>
+                                    <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input"
+                                            data-target="#datetimepicker3">
+                                        <div class="input-group-append" data-target="#datetimepicker3"
+                                            data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="material-icons">
+                                                    calendar_today
+                                                </i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">일정 종료 시간</label>
+                                    <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input"
+                                            data-target="#datetimepicker4">
+                                        <div class="input-group-append" data-target="#datetimepicker4"
+                                            data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="material-icons">
+                                                    access_time
+                                                </i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                                <label class="form-check-label" for="inlineCheckbox1">매월 반복</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                                <label class="form-check-label" for="inlineCheckbox2">하루 종일</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="create-schedule" data-dismiss="modal">일정 만들기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script id="rendered-js">
+        var time = new Date("<%=time%>");
+        var day = ['일', '월', '화', '수', '목', '금', '토'];
+        var month = [31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        var scheIdx = [0, 7, 14, 21, 28, 35];
+        var calendar = new Array(42);
+        var schedul;
+        var date;
+        var idx;
+        var text;
+
+        $.createCalender = function() {
+            if(time.getFullYear()%4 == 0 || time.getFullYear()%100 == 0 ||time.getFullYear()%400 == 0){
+                month[2] = 29;
+            }
+            else{
+                month[2] = 28;
+            }
+
+            time.setHours(0)
+            time.setMinutes(0)
+            time.setSeconds(0)
+
+            date = new Date(time);
+            date.setDate(date.getDate() - 1);
+
+            for(idx=time.getDay()-1;idx>=0;idx--){
+                calendar[idx] = new Date(date);
+                date.setDate(date.getDate() - 1);
+            }
+
+            date = new Date(time);
+            date.setDate(date.getDate() - 1);
+            for(idx=time.getDay();date<=month[time.getMonth()+1];idx++){
+                calendar[idx] = new Date(date);
+                date.setDate(date.getDate() + 1);
+            }
+
+            if(idx <= 41){
+                date.setDate(date.getDate() + 1);
+                for(idx=idx;idx<=41;idx++){
+                    calendar[idx] = new Date(date);
+                    date.setDate(date.getDate() + 1);
+                }
+            }
+
+            // date = month[time.getMonth()];
+
+            // for(idx=time.getDay()-1;idx>=0;idx--){
+            //     calendar[idx] = date;
+            //     date--;
+            // }
+
+            // date = 1;
+            // for(idx=time.getDay();date<=month[time.getMonth()+1];idx++){
+            //     calendar[idx] = date;
+            //     date++;
+            // }
+
+            // if(idx <= 41){
+            //     date = 1;
+            //     for(idx=idx;idx<=41;idx++){
+            //         calendar[idx] = date;
+            //         date++;
+            //     }
+            // }
+
+            text = "";
+            for(var i=0;i<6;i++){
+                text += '<div class="week">';
+                for(var j=0;j<7;j++){
+                    text += '<div class="day" id="' + (calendar[i * 7 + j].getMonth() + 1) + calendar[i * 7 + j].getDate() + '"><h3 class="day-label">';
+                    text += calendar[i * 7 + j].getDate();
+                    text += '</h3></div>';
+                }
+                text += '</div>';
+            }
+            $('.calendar').html(text);
+        };
+
+        $.year_month = function(){
+            $('#year-month').html(time.getFullYear() + '년 ' + (time.getMonth() + 1) + '월');
+        };
+
+        $.date_day = function(){
+            $('#date-day').html(time.getDate() + '일 ' + day[time.getDay()] + '요일');
+        };
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $('#previous-month').click(function () {
+            time.setDate(0);
+            time.setDate(1);
+            $.ajax({
+                url: '/',
+                async: true,
+                type: 'POST',
+                data:{
+                    mtime: time
+                },
+                dataType: 'text',
+                beforeSend: function(jqXHR){},
+                success: function(jqXHR) {
+                    var result = JSON.parse(jqXHR);
+                    time = new Date(result.mtime);
+                    $.year_month();
+                    $.date_day();
+                    $.createCalender();
+                },
+                error: function(jqXHR) {},
+                complete: function(jqXHR) {}
+            });
+        });
+
+        $('#next-month').click(function () {
+            time.setDate(32);
+            time.setDate(1);
+            $.ajax({
+                url: '/',
+                async: true,
+                type: 'POST',
+                data:{
+                    mtime: time
+                },
+                dataType: 'text',
+                beforeSend: function(jqXHR){},
+                success: function(jqXHR) {
+                    var result = JSON.parse(jqXHR);
+                    time = new Date(result.mtime);
+                    $.year_month();
+                    $.date_day();
+                    $.createCalender();
+                },
+                error: function(jqXHR) {},
+                complete: function(jqXHR) {}
+            });
+        });
+
+        $(function () {
+            $('#view li:first-child a').tab('show');
+        });
+
+        $(function () {
+            $('[data-toggle="popover"]').popover().on('inserted.bs.popover');
+        });
+
+        $('.calendar').on('click', '.week', function () {
+            $('#registerSchedule').modal('show');
+        });
+
+        $('.daily-calendar').click(function () {
+            $('#registerSchedule').modal('show');
+        });
+
+        $(".event-consecutive, .event, .event-repeated").click(function (event) {
+            event.stopPropagation();
+        });
+
+        $.displaySchedule = function(title, description, sDate, eDate, sTime, eTime){
+            var start = new Date(sDate + " " + sTime);
+            var end = new Date(eDate + " " + eTime);
+            var sIdx = 0;
+            var eIdx = 41;
+            var ssIdx;
+            var eeIdx;
+            console.log(start)
+            console.log(end)
+
+            if(calendar[0].getTime() <= start.getTime()){
+                for(sIdx=0;sIdx<41;sIdx++){
+                    if(calendar[sIdx].getMonth() == start.getMonth() && calendar[sIdx].getDate() == start.getDate()){
+                        break;
+                    }
+                }
+            }
+
+            if(calendar[41].getTime() > end.getTime()){
+                for(eIdx=41;eIdx>=0;eIdx--){
+                    if(calendar[eIdx].getMonth() == end.getMonth() && calendar[eIdx].getDate() == end.getDate()){
+                        break;
+                    }
+                }
+            }
+            console.log(sIdx)
+            console.log(eIdx)
+            
+            for(var i=0;i<scheIdx.length;i++){
+                console.log(calendar[scheIdx[i]] + ' ' + calendar[sIdx])
+                if(calendar[scheIdx[i]] > start){
+                    ssIdx = i;
+                    break;
+                }
+            }
+
+            for(var i=scheIdx.length-1;i>=0;i--){
+                console.log(calendar[scheIdx[i]] + ' ' + calendar[eIdx])
+                if(calendar[scheIdx[i]] < end){
+                    eeIdx = i;
+                    break;
+                }
+            }
+
+            console.log(ssIdx)
+            console.log(eeIdx)
+
+            text = "";
+
+            if(ssIdx > eeIdx){
+                text += '<div class="event event-start event-end" data-span="';
+                text += eIdx - sIdx + 1;
+                text += '" data-toggle="popover" data-html="true" data-content="<div class=&quot;content-line&quot;><div class=&quot;event-marking&quot;></div><div class=&quot;title&quot;><h5>';
+                text += title;
+                text += '</h5><h7 class=&quot;reservation&quot;>';
+                text += sDate + ' - ' + eDate;
+                text += '<span class=&quot;reservation-time&quot;>';
+                text += sTime + ' ~ ' + eTime;
+                text += '</span></div></div><div class=&quot;content-line&quot;><i class=&quot;material-icons&quot;>notes</i><div class=&quot;title&quot;><h7 class=&quot;reservation&quot;>';
+                text += description;
+                text += '</div>" data-original-title="" title="">';
+                text += title;
+                text += '</div>';
+                $("#" + (calendar[sIdx].getMonth() + 1) + calendar[sIdx].getDate()).append(text);
+            }
+            else{
+                if(sIdx != 0 && ssIdx != 0){
+                    text += '<div class="event event-start event-end" data-span="';
+                    text += scheIdx[ssIdx] - sIdx  + 1;
+                    text += '" data-toggle="popover" data-html="true" data-content="<div class=&quot;content-line&quot;><div class=&quot;event-marking&quot;></div><div class=&quot;title&quot;><h5>';
+                    text += title;
+                    text += '</h5><h7 class=&quot;reservation&quot;>';
+                    text += sDate + ' - ' + eDate;
+                    text += '<span class=&quot;reservation-time&quot;>';
+                    text += sTime + ' ~ ' + eTime;
+                    text += '</span></div></div><div class=&quot;content-line&quot;><i class=&quot;material-icons&quot;>notes</i><div class=&quot;title&quot;><h7 class=&quot;reservation&quot;>';
+                    text += description;
+                    text += '</div>" data-original-title="" title="">';
+                    text += title;
+                    text += '</div>';
+                    $("#" + (calendar[sIdx].getMonth() + 1) + calendar[sIdx].getDate()).append(text);
+                }
+
+                for(var i=ssIdx;i<eeIdx;i++){
+                    text = "";
+                    text += '<div class="event event-start event-end" data-span="';
+                    text += 7;
+                    text += '" data-toggle="popover" data-html="true" data-content="<div class=&quot;content-line&quot;><div class=&quot;event-marking&quot;></div><div class=&quot;title&quot;><h5>';
+                    text += title;
+                    text += '</h5><h7 class=&quot;reservation&quot;>';
+                    text += sDate + ' - ' + eDate;
+                    text += '<span class=&quot;reservation-time&quot;>';
+                    text += sTime + ' ~ ' + eTime;
+                    text += '</span></div></div><div class=&quot;content-line&quot;><i class=&quot;material-icons&quot;>notes</i><div class=&quot;title&quot;><h7 class=&quot;reservation&quot;>';
+                    text += description;
+                    text += '</div>" data-original-title="" title="">';
+                    text += title;
+                    text += '</div>';
+                    $("#" + (calendar[scheIdx[i]].getMonth() + 1) + calendar[scheIdx[i]].getDate()).append(text);
+                }
+
+                text = "";
+                text += '<div class="event event-start event-end" data-span="';
+                text += eIdx - scheIdx[eeIdx] + 1;
+                text += '" data-toggle="popover" data-html="true" data-content="<div class=&quot;content-line&quot;><div class=&quot;event-marking&quot;></div><div class=&quot;title&quot;><h5>';
+                text += title;
+                text += '</h5><h7 class=&quot;reservation&quot;>';
+                text += sDate + ' - ' + eDate;
+                text += '<span class=&quot;reservation-time&quot;>';
+                text += sTime + ' ~ ' + eTime;
+                text += '</span></div></div><div class=&quot;content-line&quot;><i class=&quot;material-icons&quot;>notes</i><div class=&quot;title&quot;><h7 class=&quot;reservation&quot;>';
+                text += description;
+                text += '</div>" data-original-title="" title="">';
+                text += title;
+                text += '</div>';
+                $("#" + (calendar[scheIdx[eeIdx]].getMonth() + 1) + calendar[scheIdx[eeIdx]].getDate()).append(text);
+            }
+        };
+
+
+        $('#create-schedule').click(function () {
+            var title = $('#recipient-name').val();
+            var description = $('#message-text').val();
+            var sDate = $('[data-target="#datetimepicker1"]').val();
+            var eDate = $('[data-target="#datetimepicker3"]').val();
+            var sTime = $('[data-target="#datetimepicker2"]').val();
+            var eTime = $('[data-target="#datetimepicker4"]').val();
+            $.ajax({
+                url: '/create',
+                async: true,
+                type: 'POST',
+                data: {
+                    title: title,
+                    description: description,
+                    sDate: sDate,
+                    eDate: eDate,
+                    sTime: sTime,
+                    eTime: eTime
+                },
+                dataType: 'text',
+                beforeSend: function (jqXHR) { },
+                success: function (jqXHR) {
+                    $.displaySchedule(title, description, sDate, eDate, sTime, eTime);
+                },
+                error: function (jqXHR) { },
+                complete: function (jqXHR) { }
+            });
+        });
+
+        $(function () {
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+
+            $('#datetimepicker3').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+
+        });
+
+        $(function () {
+            $('#datetimepicker2').datetimepicker({
+                format: 'LT'
+            });
+
+            $('#datetimepicker4').datetimepicker({
+                format: 'LT'
+            });
+
+        });
+
+        $.year_month();
+        $.date_day();
+        $.createCalender();
+    </script>
+
+
+</body>
+
+</html>
