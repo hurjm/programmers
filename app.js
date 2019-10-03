@@ -6,14 +6,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var createRouter = require('./routes/create');
+var crudRouter = require('./routes/crud');
 
 var sequelize = require('./models').sequelize;
 
 var app = express();
 
-// sequelize.sync();
+sequelize.sync();
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +33,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/create', createRouter);
+app.use('/crud', crudRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,7 +1,6 @@
 var express = require('express');
 var session = require('express-session');
 var router = express.Router();
-// var {User} = require('../models');
 
 router.use(session({
   secret: 'test',
@@ -9,19 +8,17 @@ router.use(session({
   saveUninitialized: true
 }));
 
-router.post('/', function (req, res) {
-  var time = new Date(req.body.mtime);
-  console.log(req.body.mtime)
-  req.session.time = time;
-  res.send({ 'result': 'success', 'mtime': time });
-});
-
 router.get('/', function (req, res) {
   if (req.session.time == undefined) {
-    req.session.time = new Date();
+    var temp = new Date();
+    temp.setHours(0);
+    temp.setMinutes(0);
+    temp.setSeconds(0);
+    temp.setMilliseconds(0);
+    req.session.time = temp;
     console.log("new")
   }
-  console.log("user.js")
+
   console.log(req.session.time);
 
   res.locals.time = req.session.time;

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('schedule', {
+  return sequelize.define('schedules', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -9,12 +9,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    period: {
+    description: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    sTime: {
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
-    repeat: {
-      type: DataTypes.STRING,
+    eTime: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+    },
+    cycle: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   }, {

@@ -15,6 +15,7 @@
     "http-errors": "^1.7.3",
     "morgan": "~1.9.1",
     "mysql2": "^1.7.0",
+    "nodemon": "^1.19.3",
     "pug": "^2.0.4",
     "sequelize": "^5.18.0",
     "sequelize-cli": "^5.5.1"
