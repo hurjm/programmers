@@ -19,10 +19,8 @@ router.post('/create', function (req, res) {
         eTime: Number(req.body.eTime),
         cycle: Number(req.body.cycle),
     }).then(function(result){
-        console.log(result);
         res.send({ 'result': 'success'});
     }).catch(function(err){
-        console.log(err);
         res.send({ 'result': 'fali'});
     });
     
@@ -36,12 +34,7 @@ router.post('/read', function (req, res) {
     end.setMinutes(59);
     end.setSeconds(59);
     end.setMilliseconds(999);
-  
-    console.log(2)
-    console.log(start)
-    console.log(end)
-    console.log(2)
-  
+
     req.session.time = time;
     
     User.findAll({
@@ -76,8 +69,6 @@ router.post('/read', function (req, res) {
         ]
       }
     }).then(function (result) {
-      console.log(result)
-  
       res.send({ 'result': 'success', 'data': result });
     }).catch(function(err){
       res.send({ 'result': 'fail', 'mtime': err });
@@ -98,10 +89,8 @@ router.post('/update', function (req, res) {
             }
         }
     }).then(function(result){
-        console.log(result);
         res.send({ 'result': 'success'});
     }).catch(function(err){
-        console.log(err);
         res.send({ 'result': 'fali'});
     });
     
@@ -113,10 +102,8 @@ router.post('/delete', function(req, res){
             id: req.body.id
         }
     }).then(function(result){
-        console.log(result)
         res.send({'result': 'success'});
     }).catch(function(err){
-        console.log(err)
         res.send({'result': 'fail'});
     });
 });

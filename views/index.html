@@ -25,7 +25,7 @@
 
     <div class="calendar-container">
         <div class="calendar-header">
-            <button class="btn btn-light">Today</button>
+            <button class="btn btn-light" id="today">Today</button>
             <div class="ico-arrow">
                 <span style="cursor:pointer" id="previous" data-toggle="tooltip" data-placement="top" title="" data-original-title="이전">
                     <i class="material-icons">
@@ -165,7 +165,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="create-schedule" data-dismiss="modal">일정 만들기</button>
+                    <button type="button" class="btn btn-primary" id="create-schedule">일정 만들기</button>
                 </div>
             </div>
         </div>
@@ -261,7 +261,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="modify-schedule" data-dismiss="modal">일정 수정하기</button>
+                    <button type="button" class="btn btn-primary" id="modify-schedule">일정 수정하기</button>
                 </div>
             </div>
         </div>
@@ -289,7 +289,19 @@
         var text;
         var popoverList;
         var updateId;
-        var selectedTime;
+        var selectedTime = new Date();
+
+        $('#today').click(function(){
+            time = new Date(Date.now());
+            $.year_month();
+            $.date_day(time);
+            $.createCalender();
+            $.load_scheduls();
+        });
+
+        $('[data-toggle="tab"]').click(function(){
+            $('.popover').popover('dispose');
+        });
 
         $("input[type=checkbox]").on('click', function(){
             if($("input:checked").val() != undefined){
@@ -319,6 +331,7 @@
         })
 
         $.createCalender = function() {
+            $('.popover').popover('dispose');
             if(time.getFullYear()%4 == 0 || time.getFullYear()%100 == 0 ||time.getFullYear()%400 == 0){
                 month[2] = 29;
             }
@@ -367,8 +380,8 @@
             $('#year-month').html(time.getFullYear() + '년 ' + (time.getMonth() + 1) + '월');
         };
 
-        $.date_day = function(){
-            $('#day').html('<div class="daily-calendar"><span class="day-name" id="date-day">'+time.getDate() + '일 ' + day[time.getDay()] + '요일'+'</span></div>');
+        $.date_day = function(presentTime){
+            $('#day').html('<div class="daily-calendar"><span class="day-name" id="date-day">'+presentTime.getDate() + '일 ' + day[presentTime.getDay()] + '요일'+'</span></div>');
         };
 
         $(function () {
@@ -392,7 +405,7 @@
                     schedulInfo = data.data;
                     popoverIdx = 0;
                     popoverList = new Array();
-                    $.date_day();
+                    $.date_day(time);
                     for(var i=0;i<data.data.length;i++){
                         $.displaySchedule(data.data[i]);
                     }
@@ -452,6 +465,7 @@
                 dataType: 'text',
                 beforeSend: function (jqXHR) { },
                 success: function (jqXHR) {
+                    time.setDate(1)
                     $.createCalender();
                     $.load_scheduls();
                 },
@@ -489,10 +503,10 @@
             });
 
             $('.calendar').on('click', '.day', function(){
-                time.setTime($(this).attr('id'));
+                selectedTime.setTime($(this).attr('id'));
                 
-                var sDTime = new Date(time);
-                var eDTime = new Date(time);
+                var sDTime = new Date(selectedTime);
+                var eDTime = new Date(selectedTime);
                 sDTime.setHours(0);
                 sDTime.setMinutes(0);
                 sDTime.setSeconds(0);
@@ -502,7 +516,8 @@
                 eDTime.setSeconds(59);
                 eDTime.setMilliseconds(999);
                 $.year_month();
-                $.date_day();
+                $.date_day(selectedTime);
+                popoverIdx = 0;
                 for(var i=0;i<schedulInfo.length;i++){
                     var start = new Date(schedulInfo[i].sTime);
                     var end = new Date(schedulInfo[i].eTime);
@@ -514,8 +529,8 @@
                 }
             });
 
-            $('.calendar').on('dblclick', '.day', function () {
-                date = new Date(Number($(this).attr('id')));
+            $('.calendar').on('dblclick', '.day-label', function () {
+                date = new Date(Number($(this).closest('div').attr('id')));
                 $('[data-target="#datetimepicker1"]').val(date.getFullYear() + '-' + (date.getMonth()+1) +'-'+date.getDate());
                 $('[data-target="#datetimepicker2"]').val(date.getHours() + ':' + date.getMinutes());
                 $('[data-target="#datetimepicker3"]').val(date.getFullYear() + '-' + (date.getMonth()+1) +'-'+date.getDate());
@@ -523,8 +538,10 @@
                 time.setDate(1);
                 $('#registerSchedule').modal('show');
             });
-            
+        
             $('.calendar, #day').on('click', '.event', function(){
+                // console.log($(this).attr('idx'))
+                // console.log(popoverList[$(this).attr('idx')])
                 $(this).popover({
                     placement: 'right',
                     html : true, 
@@ -600,10 +617,10 @@
                     }
                 }
             }
-            
+        
             for(var i=0;i<scheIdx.length;i++){
                 if(calendar[scheIdx[i]] > start){
-                    ssIdx = i;
+                    ssIdx = i-1;
                     break;
                 }
             }
@@ -614,21 +631,40 @@
                     break;
                 }
             }
+            
+            if(ssIdx == undefined){
+                ssIdx = 5;
+            }
+            if(eeIdx == undefined){
+                eeIdx = 0;
+            }
 
-            if(ssIdx > eeIdx){
+            if(start <= calendar[0] && calendar[41] <= end){
+                for(var i=0;i<=5;i++){
+                    $.addSchedule(scheIdx[i], 7, popoverIdx, title);
+                }
+            }
+            else if(ssIdx < 0){
+                for(var i=0;i<eeIdx;i++){
+                    $.addSchedule(scheIdx[i], 7, popoverIdx, title);
+                }
+                $.addSchedule(scheIdx[eeIdx], eIdx - scheIdx[eeIdx] + 1, popoverIdx, title);
+            }
+            else if(calendar[41] <= end){
+                $.addSchedule(sIdx, scheIdx[ssIdx] + 6 - sIdx + 1, popoverIdx, title);
+                for(var i=ssIdx+1;i<=5;i++){
+                    $.addSchedule(scheIdx[i], 7, popoverIdx, title);
+                }
+            }
+            else if(ssIdx == eeIdx){
                 $.addSchedule(sIdx, eIdx - sIdx + 1, popoverIdx, title);
             }
             else{
-                if((sIdx != 0 || ssIdx != 0) && ssIdx != undefined){
-                    $.addSchedule(sIdx, scheIdx[ssIdx] - sIdx, popoverIdx, title);
-                }
-
-                for(var i=ssIdx;i<eeIdx;i++){
+                $.addSchedule(sIdx, scheIdx[ssIdx] + 6 - sIdx + 1, popoverIdx, title);
+                for(var i=ssIdx+1;i<eeIdx;i++){
                     $.addSchedule(scheIdx[i], 7, popoverIdx, title);
                 }
-
                 $.addSchedule(scheIdx[eeIdx], eIdx - scheIdx[eeIdx] + 1, popoverIdx, title);
-
             }
             
             var text1 = ""
@@ -663,27 +699,30 @@
             var cycle = 0;
             var data = {title: title, description: description, sTime: sTime, eTime: eTime}
 
-            $.ajax({
-                url: '/crud/update',
-                async: true,
-                type: 'POST',
-                data: {
-                    id: updateId,
-                    title: title,
-                    description: description,
-                    sTime: sTime.getTime(),
-                    eTime: eTime.getTime(),
-                    cycle: cycle
-                },
-                dataType: 'text',
-                beforeSend: function (jqXHR) { },
-                success: function (jqXHR) {
-                    $.createCalender();
-                    $.load_scheduls()
-                },
-                error: function (jqXHR) { },
-                complete: function (jqXHR) { }
-            });
+            if(sTime <= eTime && title.length > 0){
+                $.ajax({
+                    url: '/crud/update',
+                    async: true,
+                    type: 'POST',
+                    data: {
+                        id: updateId,
+                        title: title,
+                        description: description,
+                        sTime: sTime.getTime(),
+                        eTime: eTime.getTime(),
+                        cycle: cycle
+                    },
+                    dataType: 'text',
+                    beforeSend: function (jqXHR) { },
+                    success: function (jqXHR) {
+                        $('#modifySchedule').modal('hide');
+                        $.createCalender();
+                        $.load_scheduls()
+                    },
+                    error: function (jqXHR) { },
+                    complete: function (jqXHR) { }
+                });
+            }
         });
 
         $('#create-schedule').click(function () {
@@ -698,27 +737,32 @@
             var cycle = 0;
             var data = {title: title, description: description, sTime: sTime, eTime: eTime}
 
-            $.ajax({
-                url: '/crud/create',
-                async: true,
-                type: 'POST',
-                data: {
-                    title: title,
-                    description: description,
-                    sTime: sTime.getTime(),
-                    eTime: eTime.getTime(),
-                    cycle: cycle
-                },
-                dataType: 'text',
-                beforeSend: function (jqXHR) { },
-                success: function (jqXHR) {
-                    $.createCalender();
-                    $.load_scheduls()
-                    // $.displaySchedule(data);
-                },
-                error: function (jqXHR) { },
-                complete: function (jqXHR) { }
-            });
+            title = title.trim();
+
+            if(sTime <= eTime && title.length > 0){
+                $.ajax({
+                    url: '/crud/create',
+                    async: true,
+                    type: 'POST',
+                    data: {
+                        title: title,
+                        description: description,
+                        sTime: sTime.getTime(),
+                        eTime: eTime.getTime(),
+                        cycle: cycle
+                    },
+                    dataType: 'text',
+                    beforeSend: function (jqXHR) { },
+                    success: function (jqXHR) {
+                        $('#registerSchedule').modal('hide');
+                        $.createCalender();
+                        $.load_scheduls()
+                        // $.displaySchedule(data);
+                    },
+                    error: function (jqXHR) { },
+                    complete: function (jqXHR) { }
+                });
+            }
         });
 
         $(function () {
@@ -744,7 +788,6 @@
         });
 
         $.year_month();
-        // $.date_day();
         $.createCalender();
         $.load_scheduls();
     </script>

@@ -16,10 +16,7 @@ router.get('/', function (req, res) {
     temp.setSeconds(0);
     temp.setMilliseconds(0);
     req.session.time = temp;
-    console.log("new")
   }
-
-  console.log(req.session.time);
 
   res.locals.time = req.session.time;
 
