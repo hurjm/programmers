@@ -676,12 +676,12 @@
             text1 += sHour + ' ~ ' + eHour;
             text1 += '</span></div></div><div class="content-line"><i class="material-icons">notes</i><div class="title"><h7 class="reservation">';
             text1 += description;
-            text1 += '</div><button class="btn btn-secondary delete" idx="';
+            text1 += '</div><div id="popover-btn"><button class="btn btn-secondary delete" idx="';
             text1 += data.id;
             text1 += '" type="button">삭제</button>'
             text1 += '<button class="btn btn-secondary update" idx="';
             text1 += data.id;
-            text1 += '" type="button">수정</button>'
+            text1 += '" type="button">수정</button></div>'
 
             popoverList[popoverIdx] = text1;
             popoverIdx++;
