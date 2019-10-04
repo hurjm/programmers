@@ -12,6 +12,7 @@ router.use(session({
 }));
 
 router.post('/create', function (req, res) {
+console.log(typeof req.body.title);
     User.create({
         title: req.body.title,
         description: req.body.description,
@@ -21,6 +22,7 @@ router.post('/create', function (req, res) {
     }).then(function(result){
         res.send({ 'result': 'success'});
     }).catch(function(err){
+console.log(err)
         res.send({ 'result': 'fali'});
     });
     
