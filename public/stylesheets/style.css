@@ -3,8 +3,6 @@
 @import url(https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css);
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css);
 
-@charset "UTF-8";
-
 html,
 body {
     width: 100%;
@@ -391,6 +389,16 @@ a:hover {
 
 .modal .form-row .form-check-inline {
     align-items: baseline;
+}
+
+.btn-secondary {
+    margin: 1px;
+}
+
+#popover-btn{
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
 }
 
 /*# sourceMappingURL=style.css.map */
